@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
 // Use Profile type from database types
@@ -28,7 +28,7 @@ export default function SupabaseProvider({
   children: React.ReactNode
   session: Session | null
 }) {
-  const supabase = createClientComponentClient<Database>()
+  const supabase = createBrowserClient<Database>(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const [profile, setProfile] = useState<Profile | null>(null)
 
   useEffect(() => {
