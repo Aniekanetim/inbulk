@@ -19,14 +19,11 @@ import { getUnreadNotificationCount } from '@/lib/supabase/notifications'; // NE
 
 const mainNavItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Shop', href: '/shop', icon: ShoppingBag },
-  { name: 'Wallet', href: '/wallet', icon: Wallet },
   { name: 'Inbox', href: '/inbox', icon: Mail }, // Added Inbox item
 ]
 
 const bottomNavItems = [
   { name: 'Profile', href: '/profile', icon: UserCircle },
-  { name: 'Settings', href: '/settings', icon: Settings }, // Added Settings item
 ]
 
 const SWIPE_THRESHOLD = 50 // minimum distance for swipe
@@ -111,7 +108,6 @@ export function Sidebar() {
               : 'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary-light'
           )}
           aria-current={isActive ? 'page' : undefined}
-          role="menuitem"
         >
           <div className="relative flex-shrink-0"> {/* Wrapper for icon and potential badge on icon */}
             <Icon
@@ -151,7 +147,7 @@ export function Sidebar() {
       return (
         <div key={name} className="relative">
           {!isExpanded ? (
-            <Tooltip content={name} side="right" sideOffset={8}> {/* Added sideOffset for better spacing from icon badge */}
+            <Tooltip content={name} side="right">
               {linkContent}
             </Tooltip>
           ) : (
@@ -168,7 +164,7 @@ export function Sidebar() {
       className={cn(
         'fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out',
         'bg-white border-r dark:bg-gray-900 dark:border-gray-800',
-        'transform will-change-transform',
+         'transform will-change-transform', 'flex flex-col', // Make aside the main flex container
         isExpanded ? 'w-64' : 'w-16',
         !isExpanded && '-translate-x-0'
       )}
@@ -176,39 +172,36 @@ export function Sidebar() {
       onMouseLeave={() => setIsExpanded(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      role="navigation"
       aria-label="Main navigation"
     >
-      <div className="flex h-full flex-col py-8">
-        {/* Toggle button for mobile */}
-        <button
-          className="md:hidden absolute -right-3 top-6 bg-white border rounded-full p-1 shadow-sm"
-          onClick={(e) => {
-            e.stopPropagation()
-            setIsExpanded(!isExpanded)
-          }}
-          aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-expanded={isExpanded}
-        >
-          <ChevronRight
-            className={cn(
-              'h-4 w-4 text-neutral-500 transition-transform duration-300',
-              isExpanded ? 'rotate-180' : ''
-            )}
-            aria-hidden="true"
-          />
-        </button>
+      {/* Toggle button for mobile - position might need review, but absolute should be fine */}
+      <button
+        className="md:hidden absolute -right-3 top-6 bg-white border rounded-full p-1 shadow-sm"
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsExpanded(!isExpanded)
+        }}
+        aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        aria-expanded={isExpanded}
+      >
+        <ChevronRight
+          className={cn(
+            'h-4 w-4 text-neutral-500 transition-transform duration-300',
+            isExpanded ? 'rotate-180' : ''
+          )}
+          aria-hidden="true"
+        />
+      </button>
 
-        {/* Main navigation */}
-        <nav className="flex-1 space-y-1 px-3" role="menu">
-          {mainNavItems.map(renderNavItem)}
-        </nav>
+      {/* Main navigation: scrollable, takes available space, top padding */}
+      <nav className="flex-1 space-y-1 px-3 pt-8 overflow-y-auto" aria-label="Main navigation links">
+        {mainNavItems.map(renderNavItem)}
+      </nav>
 
-        {/* Bottom navigation */}
-        <div className="px-3 mt-auto space-y-1" role="menu">
-          {bottomNavItems.map(renderNavItem)}
-        </div>
-      </div>
+      {/* Bottom navigation: fixed at the bottom, bottom padding, separation border */}
+      <nav className="px-3 pb-8 pt-4 border-t dark:border-gray-800" aria-label="User navigation links">
+        {bottomNavItems.map(renderNavItem)}
+      </nav>
     </aside>
   )
 }
