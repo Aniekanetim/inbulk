@@ -6,30 +6,25 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { User, Wallet, Settings, Bell } from 'lucide-react'
 import { WalletCard } from '@/components/profile/WalletCard'
 import { PersonalInfoSection } from '@/components/profile/PersonalInfoSection'
-import type { Session } from '@supabase/supabase-js'
+import type { Session } from '@supabase/supabase-js' // Import Session type
 
 export default async function ProfilePage() {
-  let session: Session | null = null
-  let supabaseClient
+  let session: Session | null = null;
+  let supabaseClient; // Define supabaseClient here to be accessible outside try
 
   try {
-    supabaseClient = await createServerSupabaseClient()
-    const { data: { user } } = await supabaseClient.auth.getUser()
-    if (!user) {
-      redirect('/login')
-      return
-    }
-    const { data, error } = await supabaseClient.auth.getSession()
+    supabaseClient = await createServerSupabaseClient();
+    const { data, error } = await supabaseClient.auth.getSession();
     if (error) {
-      console.error('Error getting session:', error)
-      redirect('/login')
-      return
+      console.error('Error getting session:', error);
+      redirect('/login');
+      return; // Ensure redirect happens
     }
-    session = data.session
+    session = data.session;
   } catch (error) {
-    console.error('Failed to initialize Supabase client or get session:', error)
-    redirect('/login')
-    return
+    console.error('Failed to initialize Supabase client or get session:', error);
+    redirect('/login');
+    return; // Ensure redirect happens
   }
 
   if (!session || !session.user) { // Also check for session.user

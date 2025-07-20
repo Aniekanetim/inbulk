@@ -15,8 +15,6 @@ export function AvatarEditModal({ isOpen, onClose }: AvatarEditModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const isValidImageUrl = (value: string) => /\.(png|jpe?g|gif|webp)$/i.test(value.split('?')[0])
-
   useEffect(() => {
     if (isOpen) {
       setUrl(profile?.avatar_url || '')
@@ -27,10 +25,6 @@ export function AvatarEditModal({ isOpen, onClose }: AvatarEditModalProps) {
   const handleSave = async () => {
     if (!url.trim()) {
       setError('Image URL required')
-      return
-    }
-    if (!isValidImageUrl(url.trim())) {
-      setError('Must link directly to an image')
       return
     }
     setLoading(true)
